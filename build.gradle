@@ -7,10 +7,10 @@ plugins {
     id 'org.springframework.boot' version "$springBootVersion"
     id 'io.spring.dependency-management' version "$dependencyManagementVersion"
     id 'org.jreleaser' version "$jreleaserVersion"
+    id 'io.github.pluxurydolo.version-plugin' version "$versionPluginVersion"
 }
 
 group = 'io.github.pluxurydolo'
-version = '1.4.0'
 
 java {
     toolchain {
@@ -30,37 +30,39 @@ repositories {
     mavenCentral()
 }
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            from components.java
-            pom {
-                name = 'vk-spring-boot-starter'
-                description = 'Spring Boot Starter for VK made for personal use'
-                url = 'https://upload.wikimedia.org/wikipedia/en/c/ce/Randallkennedybook.jpg'
-                developers {
-                    developer {
-                        id = 'pluxurydolo'
-                        name = 'Alexander'
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.java
+                pom {
+                    name = 'vk-spring-boot-starter'
+                    description = 'Spring Boot Starter for VK made for personal use'
+                    url = 'https://upload.wikimedia.org/wikipedia/en/c/ce/Randallkennedybook.jpg'
+                    developers {
+                        developer {
+                            id = 'pluxurydolo'
+                            name = 'Alexander'
+                        }
                     }
-                }
-                scm {
-                    url = 'scm:git:git://github.com/vk-spring-boot-starter.git'
-                    connection = 'scm:git:git://github.com/vk-spring-boot-starter.git'
-                    tag = '1.4.0'
-                }
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    scm {
+                        url = 'scm:git:git://github.com/vk-spring-boot-starter.git'
+                        connection = 'scm:git:git://github.com/vk-spring-boot-starter.git'
+                        tag = project.version
+                    }
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
                     }
                 }
             }
         }
-    }
-    repositories {
-        maven {
-            url = uri layout.buildDirectory.dir('staging-deploy')
+        repositories {
+            maven {
+                url = uri layout.buildDirectory.dir('staging-deploy')
+            }
         }
     }
 }

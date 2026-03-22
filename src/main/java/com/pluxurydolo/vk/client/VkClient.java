@@ -44,7 +44,7 @@ public class VkClient {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
-            .doOnSuccess(it -> LOGGER.info("lexf Успешно получен сервер для загрузки картинки"));
+            .doOnSuccess(_ -> LOGGER.info("lexf Успешно получен сервер для загрузки картинки"));
     }
 
     public Mono<PhotoUploadResponse> uploadPhoto(GetWallUploadServerResponse getWallUploadServerResponse, File photo) {
@@ -55,7 +55,7 @@ public class VkClient {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
-            .doOnSuccess(it -> LOGGER.info("dkix Картинка успешно загружена"));
+            .doOnSuccess(_ -> LOGGER.info("dkix Картинка успешно загружена"));
     }
 
     public Mono<SaveWallPhotoResponse> saveWallPhoto(
@@ -78,7 +78,7 @@ public class VkClient {
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
             .map(List::getFirst)
-            .doOnSuccess(it -> LOGGER.info("nfcv Картинка успешно сохранена в альбом wall группы {}", groupId));
+            .doOnSuccess(_ -> LOGGER.info("nfcv Картинка успешно сохранена в альбом wall группы {}", groupId));
     }
 
     public Mono<PostResponse> postPic(
@@ -101,7 +101,7 @@ public class VkClient {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
-            .doOnSuccess(it -> LOGGER.info("ttgd Картинка успешно выложена в группу {} с текстом {}", groupId, text));
+            .doOnSuccess(_ -> LOGGER.info("ttgd Картинка успешно выложена в группу {} с текстом {}", groupId, text));
     }
 
     public Mono<SaveResponse> saveVideo(UserActor userActor) {
@@ -110,7 +110,7 @@ public class VkClient {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
-            .doOnSuccess(it -> LOGGER.info("sfli Ссылка для сохранения видео успешно получена"));
+            .doOnSuccess(_ -> LOGGER.info("sfli Ссылка для сохранения видео успешно получена"));
     }
 
     public Mono<UploadResponse> uploadVideo(SaveResponse saveResponse, File file) {
@@ -121,7 +121,7 @@ public class VkClient {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
-            .doOnSuccess(it -> LOGGER.info("hxbp Видео успешно загружено на {}", uploadUrl));
+            .doOnSuccess(_ -> LOGGER.info("hxbp Видео успешно загружено на {}", uploadUrl));
     }
 
     public Mono<PostResponse> postVideo(
@@ -144,6 +144,6 @@ public class VkClient {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delayConfig.delay(), Schedulers.boundedElastic())
-            .doOnSuccess(it -> LOGGER.info("qicr Видео успешно выложено в группу {} с текстом {}", groupId, text));
+            .doOnSuccess(_ -> LOGGER.info("qicr Видео успешно выложено в группу {} с текстом {}", groupId, text));
     }
 }
