@@ -25,6 +25,11 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
 
+      - name: Checkstyle
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: --no-daemon -i pmdMain pmdTest
+
       - name: Bump version
         uses: gradle/gradle-build-action@v3
         with:

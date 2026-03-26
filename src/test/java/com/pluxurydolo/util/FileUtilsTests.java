@@ -1,0 +1,40 @@
+package com.pluxurydolo.util;
+
+import com.pluxurydolo.TestApplication;
+import com.pluxurydolo.vk.util.FileUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Mono;
+
+import java.io.File;
+import java.nio.file.Path;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static reactor.test.StepVerifier.create;
+
+@SpringBootTest(classes = TestApplication.class)
+class FileUtilsTests {
+
+    @Autowired
+    private FileUtils fileUtils;
+
+    @Test
+    void testCreateTempFile() {
+        Mono<File> result = fileUtils.createTempFile("blah", ".txt", new byte[]{1, 2, 3});
+
+        create(result)
+            .expectNextMatches(file -> {
+                Path filePath = file.toPath();
+                long fileLength = file.length();
+
+                assertThat(filePath)
+                    .exists();
+                assertThat(fileLength)
+                    .isEqualTo(3L);
+
+                return true;
+            })
+            .verifyComplete();
+    }
+}

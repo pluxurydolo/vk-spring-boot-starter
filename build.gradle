@@ -3,10 +3,16 @@ import static org.jreleaser.model.Active.ALWAYS
 plugins {
     id 'java-library'
     id 'maven-publish'
+
     id 'org.springframework.boot' version "$springBootVersion"
     id 'io.spring.dependency-management' version "$dependencyManagementVersion"
-    id 'org.jreleaser' version "$jreleaserVersion"
+
+    id 'io.github.pluxurydolo.test-plugin' version "$testPluginVersion"
+    id 'io.github.pluxurydolo.logs-validation-plugin' version "$logsValidationPluginVersion"
+    id 'io.github.pluxurydolo.checkstyle-plugin' version "$checkstylePluginVersion"
     id 'io.github.pluxurydolo.version-plugin' version "$versionPluginVersion"
+
+    id 'org.jreleaser' version "$jreleaserVersion"
 }
 
 group = 'io.github.pluxurydolo'
@@ -102,7 +108,15 @@ jreleaser {
 }
 
 dependencies {
-    api "com.vk.api:sdk:$vkApiVersion"
     implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-webflux:$springBootVersion"
+
+    implementation "com.vk.api:sdk:$vkApiVersion"
+    implementation "commons-io:commons-io:$commonsIoVersion"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-webflux-test:$springBootVersion"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

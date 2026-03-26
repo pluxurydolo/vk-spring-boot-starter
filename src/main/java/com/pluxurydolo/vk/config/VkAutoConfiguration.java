@@ -1,7 +1,9 @@
 package com.pluxurydolo.vk.config;
 
-import com.pluxurydolo.vk.client.VkClient;
+import com.pluxurydolo.vk.client.VkPhotoClient;
+import com.pluxurydolo.vk.client.VkVideoClient;
 import com.pluxurydolo.vk.properties.Delay;
+import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -12,16 +14,18 @@ import org.springframework.context.annotation.Bean;
 import static com.vk.api.sdk.httpclient.HttpTransportClient.getInstance;
 
 @AutoConfiguration
+@ConditionalOnProperty(prefix = "vk", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(Delay.class)
-@ConditionalOnProperty(
-    prefix = "vk.delay",
-    name = {"value", "time-unit"}
-)
 public class VkAutoConfiguration {
 
     @Bean
-    public VkClient getVkClient(VkApiClient vkApiClient, DelayConfig delayConfig) {
-        return new VkClient(vkApiClient, delayConfig);
+    public VkPhotoClient vkPhotoClient(VkApiClient vkApiClient, FileUtils fileUtils, DelayConfiguration delayConfiguration) {
+        return new VkPhotoClient(vkApiClient, fileUtils, delayConfiguration);
+    }
+
+    @Bean
+    public VkVideoClient vkVideoClient(VkApiClient vkApiClient, FileUtils fileUtils, DelayConfiguration delayConfiguration) {
+        return new VkVideoClient(vkApiClient, fileUtils, delayConfiguration);
     }
 
     @Bean
@@ -31,7 +35,12 @@ public class VkAutoConfiguration {
     }
 
     @Bean
-    public DelayConfig delayConfig(Delay delay) {
-        return new DelayConfig(delay);
+    public DelayConfiguration delayConfig(Delay delay) {
+        return new DelayConfiguration(delay);
+    }
+
+    @Bean
+    public FileUtils fileUtils() {
+        return new FileUtils();
     }
 }
