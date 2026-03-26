@@ -1,7 +1,6 @@
-package com.pluxurydolo.util;
+package com.pluxurydolo.vk.util;
 
-import com.pluxurydolo.TestApplication;
-import com.pluxurydolo.vk.util.FileUtils;
+import com.pluxurydolo.vk.TestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
