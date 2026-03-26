@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 import java.net.URI;
 
+import static java.net.URI.create;
 import static java.time.Duration.ZERO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -56,7 +57,7 @@ class PhotoUploaderTests {
         when(delayConfiguration.delay())
             .thenReturn(ZERO);
         when(getWallUploadServerResponse.getUploadUrl())
-            .thenReturn(URI.create("uri"));
+            .thenReturn(uri());
         when(vkApiClient.upload())
             .thenReturn(upload);
         when(upload.photo(anyString(), any(File.class)))
@@ -69,5 +70,9 @@ class PhotoUploaderTests {
         create(result)
             .expectNext(photoUploadResponse)
             .verifyComplete();
+    }
+
+    private static URI uri() {
+        return create("uri");
     }
 }
