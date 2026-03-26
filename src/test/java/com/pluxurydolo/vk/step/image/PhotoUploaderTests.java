@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.net.URI;
 
 import static java.net.URI.create;
 import static java.time.Duration.ZERO;
@@ -57,7 +56,7 @@ class PhotoUploaderTests {
         when(delayConfiguration.delay())
             .thenReturn(ZERO);
         when(getWallUploadServerResponse.getUploadUrl())
-            .thenReturn(uri());
+            .thenReturn(create("uri"));
         when(vkApiClient.upload())
             .thenReturn(upload);
         when(upload.photo(anyString(), any(File.class)))
@@ -70,9 +69,5 @@ class PhotoUploaderTests {
         create(result)
             .expectNext(photoUploadResponse)
             .verifyComplete();
-    }
-
-    private static URI uri() {
-        return create("uri");
     }
 }
