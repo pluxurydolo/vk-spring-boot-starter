@@ -1,0 +1,73 @@
+package com.pluxurydolo.vk.step.image;
+
+import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.vk.api.sdk.actions.Photos;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.GroupActor;
+import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.objects.photos.responses.GetWallUploadServerResponse;
+import com.vk.api.sdk.queries.photos.PhotosGetWallUploadServerQuery;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
+
+import static java.time.Duration.ZERO;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static reactor.test.StepVerifier.create;
+
+@ExtendWith(MockitoExtension.class)
+class WallUploadServerRetrieverTests {
+
+    @Mock
+    private VkApiClient vkApiClient;
+
+    @Mock
+    private DelayConfiguration delayConfiguration;
+
+    @Mock
+    private UserActor userActor;
+
+    @Mock
+    private GroupActor groupActor;
+
+    @Mock
+    private Photos photos;
+
+    @Mock
+    private PhotosGetWallUploadServerQuery photosGetWallUploadServerQuery;
+
+    @Mock
+    private GetWallUploadServerResponse getWallUploadServerResponse;
+
+    @InjectMocks
+    private WallUploadServerRetriever wallUploadServerRetriever;
+
+    @Test
+    void testRetrieve() throws ClientException, ApiException {
+        when(delayConfiguration.delay())
+            .thenReturn(ZERO);
+        when(groupActor.getGroupId())
+            .thenReturn(1L);
+        when(vkApiClient.photos())
+            .thenReturn(photos);
+        when(photos.getWallUploadServer(any()))
+            .thenReturn(photosGetWallUploadServerQuery);
+        when(photosGetWallUploadServerQuery.groupId(anyLong()))
+            .thenReturn(photosGetWallUploadServerQuery);
+        when(photosGetWallUploadServerQuery.execute())
+            .thenReturn(getWallUploadServerResponse);
+
+        Mono<GetWallUploadServerResponse> result = wallUploadServerRetriever.retrieve(userActor, groupActor);
+
+        create(result)
+            .expectNext(getWallUploadServerResponse)
+            .verifyComplete();
+    }
+}
