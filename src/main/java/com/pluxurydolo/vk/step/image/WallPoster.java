@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.pluxurydolo.vk.config.VkDelayConfiguration;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -18,11 +18,11 @@ public class WallPoster {
     private static final Logger LOGGER = LoggerFactory.getLogger(WallPoster.class);
 
     private final VkApiClient vkApiClient;
-    private final DelayConfiguration delayConfiguration;
+    private final VkDelayConfiguration vkDelayConfiguration;
 
-    public WallPoster(VkApiClient vkApiClient, DelayConfiguration delayConfiguration) {
+    public WallPoster(VkApiClient vkApiClient, VkDelayConfiguration vkDelayConfiguration) {
         this.vkApiClient = vkApiClient;
-        this.delayConfiguration = delayConfiguration;
+        this.vkDelayConfiguration = vkDelayConfiguration;
     }
 
     public Mono<PostResponse> post(
@@ -31,7 +31,7 @@ public class WallPoster {
         GroupActor groupActor,
         String text
     ) {
-        Duration delay = delayConfiguration.delay();
+        Duration delay = vkDelayConfiguration.delay();
 
         Long ownerId = saveWallPhotoResponse.getOwnerId();
         Integer photoId = saveWallPhotoResponse.getId();

@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import static com.vk.api.sdk.httpclient.HttpTransportClient.getInstance;
 
 @Configuration
-public class ClientConfiguration {
+public class VkClientConfiguration {
 
     @Bean
     public VkImageClient vkPhotoClient(

@@ -5,10 +5,10 @@ import com.pluxurydolo.vk.properties.Delay;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class DelayConfiguration {
+public class VkDelayConfiguration {
     private final Delay delay;
 
-    public DelayConfiguration(Delay delay) {
+    public VkDelayConfiguration(Delay delay) {
         this.delay = delay;
     }
 

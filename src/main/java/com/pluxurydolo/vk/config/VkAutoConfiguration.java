@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnProperty(prefix = "vk", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(Delay.class)
 @Import({
-    ClientConfiguration.class,
-    ImageStepConfiguration.class,
-    VideoStepConfiguration.class
+    VkClientConfiguration.class,
+    VkImageUploadStepConfiguration.class,
+    VkVideoUploadStepConfiguration.class
 })
 public class VkAutoConfiguration {
 }

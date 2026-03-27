@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.pluxurydolo.vk.config.VkDelayConfiguration;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -17,15 +17,15 @@ public class WallUploadServerRetriever {
     private static final Logger LOGGER = LoggerFactory.getLogger(WallUploadServerRetriever.class);
 
     private final VkApiClient vkApiClient;
-    private final DelayConfiguration delayConfiguration;
+    private final VkDelayConfiguration vkDelayConfiguration;
 
-    public WallUploadServerRetriever(VkApiClient vkApiClient, DelayConfiguration delayConfiguration) {
+    public WallUploadServerRetriever(VkApiClient vkApiClient, VkDelayConfiguration vkDelayConfiguration) {
         this.vkApiClient = vkApiClient;
-        this.delayConfiguration = delayConfiguration;
+        this.vkDelayConfiguration = vkDelayConfiguration;
     }
 
     public Mono<GetWallUploadServerResponse> retrieve(UserActor userActor, GroupActor groupActor) {
-        Duration delay = delayConfiguration.delay();
+        Duration delay = vkDelayConfiguration.delay();
 
         long groupId = -groupActor.getGroupId();
 

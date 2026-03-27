@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.pluxurydolo.vk.config.VkDelayConfiguration;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.objects.video.responses.SaveResponse;
 import com.vk.api.sdk.objects.video.responses.UploadResponse;
@@ -17,15 +17,15 @@ public class VideoUploader {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoUploader.class);
 
     private final VkApiClient vkApiClient;
-    private final DelayConfiguration delayConfiguration;
+    private final VkDelayConfiguration vkDelayConfiguration;
 
-    public VideoUploader(VkApiClient vkApiClient, DelayConfiguration delayConfiguration) {
+    public VideoUploader(VkApiClient vkApiClient, VkDelayConfiguration vkDelayConfiguration) {
         this.vkApiClient = vkApiClient;
-        this.delayConfiguration = delayConfiguration;
+        this.vkDelayConfiguration = vkDelayConfiguration;
     }
 
     public Mono<UploadResponse> upload(SaveResponse saveResponse, File file) {
-        Duration delay = delayConfiguration.delay();
+        Duration delay = vkDelayConfiguration.delay();
 
         String uploadUrl = saveResponse.getUploadUrl().toString();
 

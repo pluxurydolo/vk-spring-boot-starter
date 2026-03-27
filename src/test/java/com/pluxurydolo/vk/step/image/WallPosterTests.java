@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.pluxurydolo.vk.config.VkDelayConfiguration;
 import com.vk.api.sdk.actions.Wall;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -32,7 +32,7 @@ class WallPosterTests {
     private VkApiClient vkApiClient;
 
     @Mock
-    private DelayConfiguration delayConfiguration;
+    private VkDelayConfiguration vkDelayConfiguration;
 
     @Mock
     private SaveWallPhotoResponse saveWallPhotoResponse;
@@ -57,7 +57,7 @@ class WallPosterTests {
 
     @Test
     void testPost() throws ClientException, ApiException {
-        when(delayConfiguration.delay())
+        when(vkDelayConfiguration.delay())
             .thenReturn(ZERO);
         when(saveWallPhotoResponse.getOwnerId())
             .thenReturn(1L);

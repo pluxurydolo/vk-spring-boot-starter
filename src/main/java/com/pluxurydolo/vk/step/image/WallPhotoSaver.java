@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.pluxurydolo.vk.config.VkDelayConfiguration;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -19,11 +19,11 @@ public class WallPhotoSaver {
     private static final Logger LOGGER = LoggerFactory.getLogger(WallPhotoSaver.class);
 
     private final VkApiClient vkApiClient;
-    private final DelayConfiguration delayConfiguration;
+    private final VkDelayConfiguration vkDelayConfiguration;
 
-    public WallPhotoSaver(VkApiClient vkApiClient, DelayConfiguration delayConfiguration) {
+    public WallPhotoSaver(VkApiClient vkApiClient, VkDelayConfiguration vkDelayConfiguration) {
         this.vkApiClient = vkApiClient;
-        this.delayConfiguration = delayConfiguration;
+        this.vkDelayConfiguration = vkDelayConfiguration;
     }
 
     public Mono<SaveWallPhotoResponse> save(
@@ -31,7 +31,7 @@ public class WallPhotoSaver {
         UserActor userActor,
         GroupActor groupActor
     ) {
-        Duration delay = delayConfiguration.delay();
+        Duration delay = vkDelayConfiguration.delay();
 
         Integer server = photoUploadResponse.getServer();
         String hash = photoUploadResponse.getHash();

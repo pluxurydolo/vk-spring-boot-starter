@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.config.DelayConfiguration;
+import com.pluxurydolo.vk.config.VkDelayConfiguration;
 import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -31,7 +31,7 @@ class PhotoUploaderTests {
     private VkApiClient vkApiClient;
 
     @Mock
-    private DelayConfiguration delayConfiguration;
+    private VkDelayConfiguration vkDelayConfiguration;
 
     @Mock
     private GetWallUploadServerResponse getWallUploadServerResponse;
@@ -53,7 +53,7 @@ class PhotoUploaderTests {
 
     @Test
     void testUpload() throws ClientException, ApiException {
-        when(delayConfiguration.delay())
+        when(vkDelayConfiguration.delay())
             .thenReturn(ZERO);
         when(getWallUploadServerResponse.getUploadUrl())
             .thenReturn(create("uri"));
