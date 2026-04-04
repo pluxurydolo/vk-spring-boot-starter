@@ -117,7 +117,3 @@ dependencies {
 
     testImplementation "org.springframework.boot:spring-boot-starter-webflux-test:$springBootVersion"
 }
-
-tasks.named('test') {
-    useJUnitPlatform()
-}

@@ -34,6 +34,6 @@ public class VideoUploader {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("hxbp Видео успешно загружено на {}", uploadUrl));
+            .doOnSuccess(_ -> LOGGER.info("hxbp [vk-starter] Видео успешно загружено на {}", uploadUrl));
     }
 }

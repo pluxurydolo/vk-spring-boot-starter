@@ -34,6 +34,6 @@ public class PhotoUploader {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("dkix Картинка успешно загружена"));
+            .doOnSuccess(_ -> LOGGER.info("dkix [vk-starter] Картинка успешно загружена"));
     }
 }

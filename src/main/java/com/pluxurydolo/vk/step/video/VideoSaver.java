@@ -31,6 +31,6 @@ public class VideoSaver {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("sfli Ссылка для сохранения видео успешно получена"));
+            .doOnSuccess(_ -> LOGGER.info("sfli [vk-starter] Ссылка для сохранения видео успешно получена"));
     }
 }

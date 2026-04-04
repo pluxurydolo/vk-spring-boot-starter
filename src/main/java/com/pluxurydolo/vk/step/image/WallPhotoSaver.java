@@ -48,6 +48,6 @@ public class WallPhotoSaver {
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
             .map(List::getFirst)
-            .doOnSuccess(_ -> LOGGER.info("nfcv Картинка успешно сохранена в альбом wall группы {}", groupId));
+            .doOnSuccess(_ -> LOGGER.info("nfcv [vk-starter] Картинка успешно сохранена в альбом wall группы {}", groupId));
     }
 }

@@ -47,6 +47,6 @@ public class WallPoster {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("ttgd Картинка успешно выложена в группу {} с текстом {}", groupId, text));
+            .doOnSuccess(_ -> LOGGER.info("ttgd [vk-starter] Картинка успешно выложена в группу {} с текстом {}", groupId, text));
     }
 }

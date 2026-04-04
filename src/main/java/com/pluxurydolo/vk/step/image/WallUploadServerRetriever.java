@@ -35,6 +35,6 @@ public class WallUploadServerRetriever {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("lexf Успешно получен сервер для загрузки картинки"));
+            .doOnSuccess(_ -> LOGGER.info("lexf [vk-starter] Успешно получен сервер для загрузки картинки"));
     }
 }

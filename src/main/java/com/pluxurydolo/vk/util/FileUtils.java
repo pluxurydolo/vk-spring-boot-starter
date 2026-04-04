@@ -20,8 +20,8 @@ public class FileUtils {
             .map(Path::toFile)
             .flatMap(file -> addBytes(file, bytes))
             .subscribeOn(Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("rgva Успешно создан временный файл {}{}", fileName, fileExtension))
-            .doOnError(throwable -> LOGGER.error("egbz Произошла ошибка при создании временного файла", throwable));
+            .doOnSuccess(_ -> LOGGER.info("rgva [vk-starter] Успешно создан временный файл {}{}", fileName, fileExtension))
+            .doOnError(throwable -> LOGGER.error("egbz [vk-starter] Произошла ошибка при создании временного файла", throwable));
     }
 
     private static Mono<File> addBytes(File file, byte[] bytes) {

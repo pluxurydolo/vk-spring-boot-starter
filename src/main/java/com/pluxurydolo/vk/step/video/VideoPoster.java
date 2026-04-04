@@ -47,6 +47,6 @@ public class VideoPoster {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("qicr Видео успешно выложено в группу {} с текстом {}", groupId, text));
+            .doOnSuccess(_ -> LOGGER.info("qicr [vk-starter] Видео успешно выложено в группу {} с текстом {}", groupId, text));
     }
 }
