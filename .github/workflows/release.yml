@@ -30,6 +30,11 @@ jobs:
         with:
           arguments: --no-daemon -i pmdMain pmdTest pmdIntegrationTest
 
+      - name: Validate Logs
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: --no-daemon -i validateLogs
+
       - name: Test
         uses: gradle/gradle-build-action@v3
         with:
