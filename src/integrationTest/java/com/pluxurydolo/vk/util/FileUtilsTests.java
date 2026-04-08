@@ -1,9 +1,8 @@
 package com.pluxurydolo.vk.util;
 
-import com.pluxurydolo.vk.TestApplication;
+import com.pluxurydolo.vk.base.AbstractIntegrationTests;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -12,8 +11,7 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static reactor.test.StepVerifier.create;
 
-@SpringBootTest(classes = TestApplication.class)
-class FileUtilsTests {
+class FileUtilsTests extends AbstractIntegrationTests {
 
     @Autowired
     private FileUtils fileUtils;
