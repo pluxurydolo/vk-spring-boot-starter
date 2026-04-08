@@ -8,5 +8,5 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 
 @SpringBootTest(classes = TestApplication.class)
 @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-public abstract class AbstractIntegrationTests {
+public abstract class AbstractIntegrationTestsa {
 }
