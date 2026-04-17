@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.config.VkDelayConfiguration;
+import com.pluxurydolo.vk.util.VkDelay;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -18,11 +18,11 @@ public class VideoPoster {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoPoster.class);
 
     private final VkApiClient vkApiClient;
-    private final VkDelayConfiguration vkDelayConfiguration;
+    private final VkDelay vkDelay;
 
-    public VideoPoster(VkApiClient vkApiClient, VkDelayConfiguration vkDelayConfiguration) {
+    public VideoPoster(VkApiClient vkApiClient, VkDelay vkDelay) {
         this.vkApiClient = vkApiClient;
-        this.vkDelayConfiguration = vkDelayConfiguration;
+        this.vkDelay = vkDelay;
     }
 
     public Mono<PostResponse> post(
@@ -31,7 +31,7 @@ public class VideoPoster {
         GroupActor groupActor,
         String text
     ) {
-        Duration delay = vkDelayConfiguration.delay();
+        Duration delay = vkDelay.delay();
 
         Integer videoId = uploadResponse.getVideoId();
         Long userId = userActor.getId();

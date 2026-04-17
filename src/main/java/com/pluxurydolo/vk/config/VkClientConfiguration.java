@@ -12,6 +12,7 @@ import com.pluxurydolo.vk.step.video.VideoUploader;
 import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +22,7 @@ import static com.vk.api.sdk.httpclient.HttpTransportClient.getInstance;
 public class VkClientConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     public VkImageClient vkPhotoClient(
         WallUploadServerRetriever wallUploadServerRetriever,
         PhotoUploader photoUploader,
@@ -32,6 +34,7 @@ public class VkClientConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public VkVideoClient vkVideoClient(
         VideoSaver videoSaver,
         VideoUploader videoUploader,
@@ -42,13 +45,9 @@ public class VkClientConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public VkApiClient vkApiClient() {
         TransportClient transportClient = getInstance();
         return new VkApiClient(transportClient);
-    }
-
-    @Bean
-    public FileUtils fileUtils() {
-        return new FileUtils();
     }
 }

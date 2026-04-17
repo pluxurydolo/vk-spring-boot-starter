@@ -1,14 +1,14 @@
-package com.pluxurydolo.vk.config;
+package com.pluxurydolo.vk.util;
 
 import com.pluxurydolo.vk.properties.Delay;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-public class VkDelayConfiguration {
+public class VkDelay {
     private final Delay delay;
 
-    public VkDelayConfiguration(Delay delay) {
+    public VkDelay(Delay delay) {
         this.delay = delay;
     }
 

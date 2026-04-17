@@ -12,7 +12,8 @@ import org.springframework.context.annotation.Import;
 @Import({
     VkClientConfiguration.class,
     VkImageUploadStepConfiguration.class,
-    VkVideoUploadStepConfiguration.class
+    VkVideoUploadStepConfiguration.class,
+    VkUtilConfiguration.class
 })
 public class VkAutoConfiguration {
 }
