@@ -1,8 +1,6 @@
-package com.pluxurydolo.vk.config;
+package com.pluxurydolo.vk.configuration;
 
-import com.pluxurydolo.vk.properties.Delay;
 import com.pluxurydolo.vk.util.FileUtils;
-import com.pluxurydolo.vk.util.VkDelay;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,11 +12,5 @@ public class VkUtilConfiguration {
     @ConditionalOnMissingBean
     public FileUtils fileUtils() {
         return new FileUtils();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public VkDelay vkDelay(Delay delay) {
-        return new VkDelay(delay);
     }
 }

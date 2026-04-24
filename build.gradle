@@ -108,10 +108,12 @@ jreleaser {
 }
 
 dependencies {
-    api "com.vk.api:sdk:$vkApiVersion"
-
     implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    api "com.vk.api:sdk:$vkApiVersion"
 
     implementation "commons-io:commons-io:$commonsIoVersion"
 

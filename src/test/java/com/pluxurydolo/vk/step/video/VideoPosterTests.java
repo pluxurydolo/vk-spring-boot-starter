@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.util.VkDelay;
+import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Wall;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -32,7 +32,7 @@ class VideoPosterTests {
     private VkApiClient vkApiClient;
 
     @Mock
-    private VkDelay vkDelay;
+    private VkApiProperties vkApiProperties;
 
     @Mock
     private UploadResponse uploadResponse;
@@ -57,7 +57,7 @@ class VideoPosterTests {
 
     @Test
     void testPost() throws ClientException, ApiException {
-        when(vkDelay.delay())
+        when(vkApiProperties.delay())
             .thenReturn(ZERO);
         when(uploadResponse.getVideoId())
             .thenReturn(1);

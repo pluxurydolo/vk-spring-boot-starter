@@ -1,0 +1,25 @@
+{
+  "properties": [
+    {
+      "name": "vk.api.delay",
+      "type": "java.time.Duration",
+      "description": "Задержка при взаимодействии с VK API.",
+      "sourceType": "com.pluxurydolo.vk.properties.VkApiProperties"
+    }
+  ],
+  "hints": [
+    {
+      "name": "vk.api.delay",
+      "values": [
+        {
+          "value": "1s"
+        }
+      ],
+      "providers": [
+        {
+          "name": "any"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.util.VkDelay;
+import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Photos;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -34,7 +34,7 @@ class WallPhotoSaverTests {
     private VkApiClient vkApiClient;
 
     @Mock
-    private VkDelay vkDelay;
+    private VkApiProperties vkApiProperties;
 
     @Mock
     private PhotoUploadResponse photoUploadResponse;
@@ -59,7 +59,7 @@ class WallPhotoSaverTests {
 
     @Test
     void testSave() throws ClientException, ApiException {
-        when(vkDelay.delay())
+        when(vkApiProperties.delay())
             .thenReturn(ZERO);
         when(photoUploadResponse.getServer())
             .thenReturn(1);

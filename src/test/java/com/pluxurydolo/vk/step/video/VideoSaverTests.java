@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.util.VkDelay;
+import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Video;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -27,7 +27,7 @@ class VideoSaverTests {
     private VkApiClient vkApiClient;
 
     @Mock
-    private VkDelay vkDelay;
+    private VkApiProperties vkApiProperties;
 
     @Mock
     private UserActor userActor;
@@ -46,7 +46,7 @@ class VideoSaverTests {
 
     @Test
     void testSave() throws ClientException, ApiException {
-        when(vkDelay.delay())
+        when(vkApiProperties.delay())
             .thenReturn(ZERO);
         when(vkApiClient.video())
             .thenReturn(video);

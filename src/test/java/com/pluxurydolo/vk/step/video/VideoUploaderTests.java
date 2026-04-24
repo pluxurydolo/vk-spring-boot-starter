@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.util.VkDelay;
+import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -31,7 +31,7 @@ class VideoUploaderTests {
     private VkApiClient vkApiClient;
 
     @Mock
-    private VkDelay vkDelay;
+    private VkApiProperties vkApiProperties;
 
     @Mock
     private SaveResponse saveResponse;
@@ -53,7 +53,7 @@ class VideoUploaderTests {
 
     @Test
     void testUpload() throws ClientException, ApiException {
-        when(vkDelay.delay())
+        when(vkApiProperties.delay())
             .thenReturn(ZERO);
         when(saveResponse.getUploadUrl())
             .thenReturn(create("uri"));

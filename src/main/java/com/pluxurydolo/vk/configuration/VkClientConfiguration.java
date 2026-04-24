@@ -1,4 +1,4 @@
-package com.pluxurydolo.vk.config;
+package com.pluxurydolo.vk.configuration;
 
 import com.pluxurydolo.vk.client.VkImageClient;
 import com.pluxurydolo.vk.client.VkVideoClient;

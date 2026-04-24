@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
-import com.pluxurydolo.vk.util.VkDelay;
+import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.objects.photos.responses.GetWallUploadServerResponse;
 import com.vk.api.sdk.objects.photos.responses.PhotoUploadResponse;
@@ -17,15 +17,15 @@ public class PhotoUploader {
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoUploader.class);
 
     private final VkApiClient vkApiClient;
-    private final VkDelay vkDelay;
+    private final VkApiProperties vkApiProperties;
 
-    public PhotoUploader(VkApiClient vkApiClient, VkDelay vkDelay) {
+    public PhotoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
-        this.vkDelay = vkDelay;
+        this.vkApiProperties = vkApiProperties;
     }
 
     public Mono<PhotoUploadResponse> upload(GetWallUploadServerResponse getWallUploadServerResponse, File photo) {
-        Duration delay = vkDelay.delay();
+        Duration delay = vkApiProperties.delay();
 
         String serverUrl = getWallUploadServerResponse.getUploadUrl().toString();
 

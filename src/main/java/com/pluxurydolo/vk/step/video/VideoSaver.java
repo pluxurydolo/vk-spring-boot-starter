@@ -1,6 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.util.VkDelay;
+import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.video.responses.SaveResponse;
@@ -16,15 +16,15 @@ public class VideoSaver {
     private static final Logger LOGGER = LoggerFactory.getLogger(VideoSaver.class);
 
     private final VkApiClient vkApiClient;
-    private final VkDelay vkDelay;
+    private final VkApiProperties vkApiProperties;
 
-    public VideoSaver(VkApiClient vkApiClient, VkDelay vkDelay) {
+    public VideoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
-        this.vkDelay = vkDelay;
+        this.vkApiProperties = vkApiProperties;
     }
 
     public Mono<SaveResponse> save(UserActor userActor) {
-        Duration delay = vkDelay.delay();
+        Duration delay = vkApiProperties.delay();
 
         VideoSaveQuery query = vkApiClient.video()
             .save(userActor);
