@@ -1,42 +1,29 @@
 package com.pluxurydolo.vk.client;
 
 import com.pluxurydolo.vk.dto.PostVideoRequest;
-import com.pluxurydolo.vk.step.video.VideoPoster;
-import com.pluxurydolo.vk.step.video.VideoSaver;
-import com.pluxurydolo.vk.step.video.VideoUploader;
-import com.pluxurydolo.vk.util.FileUtils;
-import com.vk.api.sdk.client.actors.GroupActor;
-import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.video.responses.SaveResponse;
+import com.pluxurydolo.vk.exception.VkVideoUploadException;
+import com.pluxurydolo.vk.step.video.VkVideoSender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-
-import java.io.File;
+import reactor.core.scheduler.Schedulers;
 
 public class VkVideoClient {
-    private final VideoSaver videoSaver;
-    private final VideoUploader videoUploader;
-    private final VideoPoster videoPoster;
-    private final FileUtils fileUtils;
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkVideoClient.class);
 
-    public VkVideoClient(VideoSaver videoSaver, VideoUploader videoUploader, VideoPoster videoPoster, FileUtils fileUtils) {
-        this.videoSaver = videoSaver;
-        this.videoUploader = videoUploader;
-        this.videoPoster = videoPoster;
-        this.fileUtils = fileUtils;
+    private final VkVideoSender vkVideoSender;
+
+    public VkVideoClient(VkVideoSender vkVideoSender) {
+        this.vkVideoSender = vkVideoSender;
     }
 
-    public Mono<String> postVideoToGroup(PostVideoRequest postVideoRequest) {
-        byte[] video = postVideoRequest.video();
-        String caption = postVideoRequest.caption();
-        UserActor userActor = postVideoRequest.userActor();
-        GroupActor groupActor = postVideoRequest.groupActor();
-
-        Mono<SaveResponse> saveResponse = videoSaver.save(userActor);
-        Mono<File> file = fileUtils.createTempFile("file", ".mp4", video);
-
-        return Mono.zip(saveResponse, file)
-            .flatMap(zip -> videoUploader.upload(zip.getT1(), zip.getT2()))
-            .flatMap(response -> videoPoster.post(response, userActor, groupActor, caption))
-            .thenReturn(caption);
+    public Mono<String> sendVideoToGroup(PostVideoRequest request) {
+        return vkVideoSender.send(request)
+            .doOnSuccess(_ -> LOGGER.info("dyhn [vk-starter] Видео успешно опубликовано"))
+            .onErrorResume(throwable -> {
+                LOGGER.info("eupk [vk-starter] Произошла ошибка при публикации видео");
+                return Mono.error(new VkVideoUploadException(throwable));
+            })
+            .subscribeOn(Schedulers.boundedElastic());
     }
 }

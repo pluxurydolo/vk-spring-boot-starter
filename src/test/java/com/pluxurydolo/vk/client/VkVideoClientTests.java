@@ -1,15 +1,9 @@
 package com.pluxurydolo.vk.client;
 
 import com.pluxurydolo.vk.dto.PostVideoRequest;
-import com.pluxurydolo.vk.step.video.VideoPoster;
-import com.pluxurydolo.vk.step.video.VideoSaver;
-import com.pluxurydolo.vk.step.video.VideoUploader;
-import com.pluxurydolo.vk.util.FileUtils;
+import com.pluxurydolo.vk.step.video.VkVideoSender;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.video.responses.SaveResponse;
-import com.vk.api.sdk.objects.video.responses.UploadResponse;
-import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,10 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
@@ -29,48 +20,33 @@ import static reactor.test.StepVerifier.create;
 class VkVideoClientTests {
 
     @Mock
-    private VideoSaver videoSaver;
-
-    @Mock
-    private VideoUploader videoUploader;
-
-    @Mock
-    private VideoPoster videoPoster;
-
-    @Mock
-    private FileUtils fileUtils;
-
-    @Mock
-    private SaveResponse saveResponse;
-
-    @Mock
-    private File file;
-
-    @Mock
-    private UploadResponse uploadResponse;
-
-    @Mock
-    private PostResponse postResponse;
+    private VkVideoSender vkVideoSender;
 
     @InjectMocks
     private VkVideoClient vkVideoClient;
 
     @Test
-    void testPostVideoToGroup() {
-        when(videoSaver.save(any()))
-            .thenReturn(Mono.just(saveResponse));
-        when(fileUtils.createTempFile(anyString(), anyString(), any()))
-            .thenReturn(Mono.just(file));
-        when(videoUploader.upload(any(), any()))
-            .thenReturn(Mono.just(uploadResponse));
-        when(videoPoster.post(any(), any(), any(), anyString()))
-            .thenReturn(Mono.just(postResponse));
+    void testSendVideoToGroup() {
+        when(vkVideoSender.send(any()))
+            .thenReturn(Mono.just(""));
 
-        Mono<String> result = vkVideoClient.postVideoToGroup(postVideoRequest());
+        Mono<String> result = vkVideoClient.sendVideoToGroup(postVideoRequest());
 
         create(result)
-            .expectNext("caption")
+            .expectNext("")
             .verifyComplete();
+    }
+
+    @Test
+    void testSendVideoToGroupWhenExceptionOccurred() {
+        when(vkVideoSender.send(any()))
+            .thenReturn(Mono.error(new RuntimeException()));
+
+        Mono<String> result = vkVideoClient.sendVideoToGroup(postVideoRequest());
+
+        create(result)
+            .expectError(RuntimeException.class)
+            .verify();
     }
 
     private static PostVideoRequest postVideoRequest() {
