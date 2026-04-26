@@ -7,6 +7,7 @@ import com.pluxurydolo.vk.step.video.VkVideoSender;
 import com.pluxurydolo.vk.step.video.VkVideoUploader;
 import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.VkApiClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class VkVideoUploadStepConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     public VkVideoSender vkVideoSender(
         VkVideoSaver vkVideoSaver,
         VkVideoUploader vkVideoUploader,
@@ -24,16 +26,19 @@ public class VkVideoUploadStepConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public VkVideoUploader vkVideoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         return new VkVideoUploader(vkApiClient, vkApiProperties);
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public VkVideoSaver vkVideoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         return new VkVideoSaver(vkApiClient, vkApiProperties);
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public VkVideoPoster vkVideoPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         return new VkVideoPoster(vkApiClient, vkApiProperties);
     }
