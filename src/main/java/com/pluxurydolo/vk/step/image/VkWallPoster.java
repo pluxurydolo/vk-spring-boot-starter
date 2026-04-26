@@ -14,13 +14,13 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
-public class WallPoster {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WallPoster.class);
+public class VkWallPoster {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkWallPoster.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public WallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkWallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
