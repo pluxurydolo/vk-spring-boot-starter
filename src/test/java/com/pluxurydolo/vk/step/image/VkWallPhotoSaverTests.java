@@ -24,11 +24,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class WallPhotoSaverTests {
+class VkWallPhotoSaverTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -55,7 +56,7 @@ class WallPhotoSaverTests {
     private SaveWallPhotoResponse saveWallPhotoResponse;
 
     @InjectMocks
-    private WallPhotoSaver wallPhotoSaver;
+    private VkWallPhotoSaver vkWallPhotoSaver;
 
     @Test
     void testSave() throws ClientException, ApiException {
@@ -84,10 +85,44 @@ class WallPhotoSaverTests {
         when(photosSaveWallPhotoQuery.execute())
             .thenReturn(List.of(saveWallPhotoResponse));
 
-        Mono<SaveWallPhotoResponse> result = wallPhotoSaver.save(photoUploadResponse, userActor, groupActor);
+        Mono<SaveWallPhotoResponse> result = vkWallPhotoSaver.save(photoUploadResponse, userActor, groupActor);
 
         create(result)
             .expectNext(saveWallPhotoResponse)
             .verifyComplete();
+    }
+
+    @Test
+    void testSaveWhenExceptionOccurred() throws ClientException, ApiException {
+        doThrow(RuntimeException.class)
+            .when(photosSaveWallPhotoQuery).execute();
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
+        when(photoUploadResponse.getServer())
+            .thenReturn(1);
+        when(photoUploadResponse.getHash())
+            .thenReturn("hash");
+        when(photoUploadResponse.getPhoto())
+            .thenReturn("photo");
+        when(groupActor.getGroupId())
+            .thenReturn(1L);
+        when(vkApiClient.photos())
+            .thenReturn(photos);
+        when(photos.saveWallPhoto(any()))
+            .thenReturn(photosSaveWallPhotoQuery);
+        when(photosSaveWallPhotoQuery.server(anyInt()))
+            .thenReturn(photosSaveWallPhotoQuery);
+        when(photosSaveWallPhotoQuery.hash(anyString()))
+            .thenReturn(photosSaveWallPhotoQuery);
+        when(photosSaveWallPhotoQuery.photo(anyString()))
+            .thenReturn(photosSaveWallPhotoQuery);
+        when(photosSaveWallPhotoQuery.groupId(anyLong()))
+            .thenReturn(photosSaveWallPhotoQuery);
+
+        Mono<SaveWallPhotoResponse> result = vkWallPhotoSaver.save(photoUploadResponse, userActor, groupActor);
+
+        create(result)
+            .expectError(RuntimeException.class)
+            .verify();
     }
 }

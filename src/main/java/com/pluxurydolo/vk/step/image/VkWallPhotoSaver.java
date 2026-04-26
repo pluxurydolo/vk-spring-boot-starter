@@ -15,13 +15,13 @@ import reactor.core.scheduler.Schedulers;
 import java.time.Duration;
 import java.util.List;
 
-public class WallPhotoSaver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WallPhotoSaver.class);
+public class VkWallPhotoSaver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkWallPhotoSaver.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public WallPhotoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkWallPhotoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
