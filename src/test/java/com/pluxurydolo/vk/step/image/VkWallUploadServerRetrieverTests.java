@@ -19,11 +19,12 @@ import reactor.core.publisher.Mono;
 import static java.time.Duration.ZERO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class WallUploadServerRetrieverTests {
+class VkWallUploadServerRetrieverTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -47,7 +48,7 @@ class WallUploadServerRetrieverTests {
     private GetWallUploadServerResponse getWallUploadServerResponse;
 
     @InjectMocks
-    private WallUploadServerRetriever wallUploadServerRetriever;
+    private VkWallUploadServerRetriever vkWallUploadServerRetriever;
 
     @Test
     void testRetrieve() throws ClientException, ApiException {
@@ -64,10 +65,32 @@ class WallUploadServerRetrieverTests {
         when(photosGetWallUploadServerQuery.execute())
             .thenReturn(getWallUploadServerResponse);
 
-        Mono<GetWallUploadServerResponse> result = wallUploadServerRetriever.retrieve(userActor, groupActor);
+        Mono<GetWallUploadServerResponse> result = vkWallUploadServerRetriever.retrieve(userActor, groupActor);
 
         create(result)
             .expectNext(getWallUploadServerResponse)
             .verifyComplete();
+    }
+
+    @Test
+    void testRetrieveWhenExceptionOccurred() throws ClientException, ApiException {
+        doThrow(RuntimeException.class)
+            .when(photosGetWallUploadServerQuery).execute();
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
+        when(groupActor.getGroupId())
+            .thenReturn(1L);
+        when(vkApiClient.photos())
+            .thenReturn(photos);
+        when(photos.getWallUploadServer(any()))
+            .thenReturn(photosGetWallUploadServerQuery);
+        when(photosGetWallUploadServerQuery.groupId(anyLong()))
+            .thenReturn(photosGetWallUploadServerQuery);
+
+        Mono<GetWallUploadServerResponse> result = vkWallUploadServerRetriever.retrieve(userActor, groupActor);
+
+        create(result)
+            .expectError(RuntimeException.class)
+            .verify();
     }
 }

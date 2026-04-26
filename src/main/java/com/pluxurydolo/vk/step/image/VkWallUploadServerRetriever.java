@@ -13,13 +13,13 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
-public class WallUploadServerRetriever {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WallUploadServerRetriever.class);
+public class VkWallUploadServerRetriever {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkWallUploadServerRetriever.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public WallUploadServerRetriever(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkWallUploadServerRetriever(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
