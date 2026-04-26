@@ -27,7 +27,8 @@ public class VkVideoUploader {
     public Mono<UploadResponse> upload(SaveResponse saveResponse, File file) {
         Duration delay = vkApiProperties.delay();
 
-        String uploadUrl = saveResponse.getUploadUrl().toString();
+        String uploadUrl = saveResponse.getUploadUrl()
+            .toString();
 
         UploadVideoQuery query = vkApiClient.upload()
             .video(uploadUrl, file);
