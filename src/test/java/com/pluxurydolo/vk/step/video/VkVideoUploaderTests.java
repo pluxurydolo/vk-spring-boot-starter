@@ -21,11 +21,12 @@ import static java.net.URI.create;
 import static java.time.Duration.ZERO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VideoUploaderTests {
+class VkVideoUploaderTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -49,7 +50,7 @@ class VideoUploaderTests {
     private UploadResponse uploadResponse;
 
     @InjectMocks
-    private VideoUploader videoUploader;
+    private VkVideoUploader vkVideoUploader;
 
     @Test
     void testUpload() throws ClientException, ApiException {
@@ -64,10 +65,30 @@ class VideoUploaderTests {
         when(uploadVideoQuery.execute())
             .thenReturn(uploadResponse);
 
-        Mono<UploadResponse> result = videoUploader.upload(saveResponse, file);
+        Mono<UploadResponse> result = vkVideoUploader.upload(saveResponse, file);
 
         create(result)
             .expectNext(uploadResponse)
             .verifyComplete();
+    }
+
+    @Test
+    void testUploadWhenExceptionOccurred() throws ClientException, ApiException {
+        doThrow(RuntimeException.class)
+            .when(uploadVideoQuery).execute();
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
+        when(saveResponse.getUploadUrl())
+            .thenReturn(create("uri"));
+        when(vkApiClient.upload())
+            .thenReturn(upload);
+        when(upload.video(anyString(), any(File.class)))
+            .thenReturn(uploadVideoQuery);
+
+        Mono<UploadResponse> result = vkVideoUploader.upload(saveResponse, file);
+
+        create(result)
+            .expectError(RuntimeException.class)
+            .verify();
     }
 }
