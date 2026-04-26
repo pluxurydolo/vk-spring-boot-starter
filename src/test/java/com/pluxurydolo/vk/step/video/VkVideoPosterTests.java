@@ -22,11 +22,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VideoPosterTests {
+class VkVideoPosterTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -53,7 +54,7 @@ class VideoPosterTests {
     private PostResponse postResponse;
 
     @InjectMocks
-    private VideoPoster videoPoster;
+    private VkVideoPoster vkVideoPoster;
 
     @Test
     void testPost() throws ClientException, ApiException {
@@ -80,10 +81,42 @@ class VideoPosterTests {
         when(wallPostQuery.execute())
             .thenReturn(postResponse);
 
-        Mono<PostResponse> result = videoPoster.post(uploadResponse, userActor, groupActor, "text");
+        Mono<PostResponse> result = vkVideoPoster.post(uploadResponse, userActor, groupActor, "text");
 
         create(result)
             .expectNext(postResponse)
             .verifyComplete();
+    }
+
+    @Test
+    void testPostWhenExceptionOccurred() throws ClientException, ApiException {
+        doThrow(RuntimeException.class)
+            .when(wallPostQuery).execute();
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
+        when(uploadResponse.getVideoId())
+            .thenReturn(1);
+        when(userActor.getId())
+            .thenReturn(1L);
+        when(groupActor.getGroupId())
+            .thenReturn(1L);
+        when(vkApiClient.wall())
+            .thenReturn(wall);
+        when(wall.post(any()))
+            .thenReturn(wallPostQuery);
+        when(wallPostQuery.ownerId(anyLong()))
+            .thenReturn(wallPostQuery);
+        when(wallPostQuery.message(anyString()))
+            .thenReturn(wallPostQuery);
+        when(wallPostQuery.attachments(anyString()))
+            .thenReturn(wallPostQuery);
+        when(wallPostQuery.fromGroup(anyBoolean()))
+            .thenReturn(wallPostQuery);
+
+        Mono<PostResponse> result = vkVideoPoster.post(uploadResponse, userActor, groupActor, "text");
+
+        create(result)
+            .expectError(RuntimeException.class)
+            .verify();
     }
 }

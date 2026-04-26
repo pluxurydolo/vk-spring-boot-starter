@@ -14,13 +14,13 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
-public class VideoPoster {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VideoPoster.class);
+public class VkVideoPoster {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkVideoPoster.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public VideoPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkVideoPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
