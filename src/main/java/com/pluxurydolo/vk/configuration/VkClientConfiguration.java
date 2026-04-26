@@ -2,14 +2,8 @@ package com.pluxurydolo.vk.configuration;
 
 import com.pluxurydolo.vk.client.VkImageClient;
 import com.pluxurydolo.vk.client.VkVideoClient;
-import com.pluxurydolo.vk.step.image.PhotoUploader;
-import com.pluxurydolo.vk.step.image.WallPhotoSaver;
-import com.pluxurydolo.vk.step.image.WallPoster;
-import com.pluxurydolo.vk.step.image.WallUploadServerRetriever;
-import com.pluxurydolo.vk.step.video.VideoPoster;
-import com.pluxurydolo.vk.step.video.VideoSaver;
-import com.pluxurydolo.vk.step.video.VideoUploader;
-import com.pluxurydolo.vk.util.FileUtils;
+import com.pluxurydolo.vk.step.image.VkImageSender;
+import com.pluxurydolo.vk.step.video.VkVideoSender;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,25 +17,14 @@ public class VkClientConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public VkImageClient vkPhotoClient(
-        WallUploadServerRetriever wallUploadServerRetriever,
-        PhotoUploader photoUploader,
-        WallPhotoSaver wallPhotoSaver,
-        WallPoster wallPoster,
-        FileUtils fileUtils
-    ) {
-        return new VkImageClient(wallUploadServerRetriever, photoUploader, wallPhotoSaver, wallPoster, fileUtils);
+    public VkImageClient vkImageClient(VkImageSender vkImageSender) {
+        return new VkImageClient(vkImageSender);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VkVideoClient vkVideoClient(
-        VideoSaver videoSaver,
-        VideoUploader videoUploader,
-        VideoPoster videoPoster,
-        FileUtils fileUtils
-    ) {
-        return new VkVideoClient(videoSaver, videoUploader, videoPoster, fileUtils);
+    public VkVideoClient vkVideoClient(VkVideoSender vkVideoSender) {
+        return new VkVideoClient(vkVideoSender);
     }
 
     @Bean

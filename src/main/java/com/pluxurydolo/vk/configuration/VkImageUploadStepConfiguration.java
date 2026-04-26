@@ -1,10 +1,12 @@
 package com.pluxurydolo.vk.configuration;
 
 import com.pluxurydolo.vk.properties.VkApiProperties;
-import com.pluxurydolo.vk.step.image.PhotoUploader;
-import com.pluxurydolo.vk.step.image.WallPhotoSaver;
-import com.pluxurydolo.vk.step.image.WallPoster;
-import com.pluxurydolo.vk.step.image.WallUploadServerRetriever;
+import com.pluxurydolo.vk.step.image.VkImageSender;
+import com.pluxurydolo.vk.step.image.VkPhotoUploader;
+import com.pluxurydolo.vk.step.image.VkWallPhotoSaver;
+import com.pluxurydolo.vk.step.image.VkWallPoster;
+import com.pluxurydolo.vk.step.image.VkWallUploadServerRetriever;
+import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.VkApiClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,22 +15,39 @@ import org.springframework.context.annotation.Configuration;
 public class VkImageUploadStepConfiguration {
 
     @Bean
-    public WallUploadServerRetriever wallUploadServerRetriever(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new WallUploadServerRetriever(vkApiClient, vkApiProperties);
+    public VkImageSender vkImageSender(
+        VkWallUploadServerRetriever vkWallUploadServerRetriever,
+        VkPhotoUploader vkPhotoUploader,
+        VkWallPhotoSaver vkWallPhotoSaver,
+        VkWallPoster vkWallPoster,
+        FileUtils fileUtils
+    ) {
+        return new VkImageSender(
+            vkWallUploadServerRetriever,
+            vkPhotoUploader,
+            vkWallPhotoSaver,
+            vkWallPoster,
+            fileUtils
+        );
     }
 
     @Bean
-    public PhotoUploader photoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new PhotoUploader(vkApiClient, vkApiProperties);
+    public VkWallUploadServerRetriever vkWallUploadServerRetriever(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkWallUploadServerRetriever(vkApiClient, vkApiProperties);
     }
 
     @Bean
-    public WallPhotoSaver wallPhotoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new WallPhotoSaver(vkApiClient, vkApiProperties);
+    public VkPhotoUploader vkPhotoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkPhotoUploader(vkApiClient, vkApiProperties);
     }
 
     @Bean
-    public WallPoster wallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new WallPoster(vkApiClient, vkApiProperties);
+    public VkWallPhotoSaver vkWallPhotoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkWallPhotoSaver(vkApiClient, vkApiProperties);
+    }
+
+    @Bean
+    public VkWallPoster vkWallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkWallPoster(vkApiClient, vkApiProperties);
     }
 }
