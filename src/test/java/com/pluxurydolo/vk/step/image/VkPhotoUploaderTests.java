@@ -73,15 +73,17 @@ class VkPhotoUploaderTests {
     }
 
     @Test
-    void testUploadWhenExceptionOccurred() {
+    void testUploadWhenExceptionOccurred() throws ClientException, ApiException {
         doThrow(RuntimeException.class)
-            .when(vkApiClient).upload();
+            .when(uploadPhotoQuery).execute();
         when(vkApiProperties.delay())
             .thenReturn(ZERO);
         when(getWallUploadServerResponse.getUploadUrl())
             .thenReturn(create("uri"));
         when(vkApiClient.upload())
             .thenReturn(upload);
+        when(upload.photo(anyString(), any(File.class)))
+            .thenReturn(uploadPhotoQuery);
 
         Mono<PhotoUploadResponse> result = vkPhotoUploader.upload(getWallUploadServerResponse, file);
 

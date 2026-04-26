@@ -18,7 +18,7 @@ public class VkImageClient {
     }
 
     public Mono<String> sendImageToGroup(PostImageRequest request) {
-        return vkImageSender.sendToGroup(request)
+        return vkImageSender.send(request)
             .doOnSuccess(_ -> LOGGER.info("cepb [vk-starter] Изображение успешно опубликовано"))
             .onErrorResume(throwable -> {
                 LOGGER.info("abka [vk-starter] Произошла ошибка при публикации изображения");

@@ -27,7 +27,7 @@ class VkImageClientTests {
 
     @Test
     void testSendImageToGroup() {
-        when(vkImageSender.sendToGroup(any()))
+        when(vkImageSender.send(any()))
             .thenReturn(Mono.just(""));
 
         Mono<String> result = vkImageClient.sendImageToGroup(postImageRequest());
@@ -39,7 +39,7 @@ class VkImageClientTests {
 
     @Test
     void testSendImageToGroupWhenExceptionOccurred() {
-        when(vkImageSender.sendToGroup(any()))
+        when(vkImageSender.send(any()))
             .thenReturn(Mono.error(new RuntimeException()));
 
         Mono<String> result = vkImageClient.sendImageToGroup(postImageRequest());

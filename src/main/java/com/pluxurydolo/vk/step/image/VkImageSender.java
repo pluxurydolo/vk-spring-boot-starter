@@ -30,7 +30,7 @@ public class VkImageSender {
         this.fileUtils = fileUtils;
     }
 
-    public Mono<String> sendToGroup(PostImageRequest postImageRequest) {
+    public Mono<String> send(PostImageRequest postImageRequest) {
         byte[] image = postImageRequest.image();
         String caption = postImageRequest.caption();
         UserActor userActor = postImageRequest.userActor();

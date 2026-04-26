@@ -1,12 +1,11 @@
-package com.pluxurydolo.vk.step.image;
+package com.pluxurydolo.vk.step.video;
 
-import com.pluxurydolo.vk.dto.PostImageRequest;
+import com.pluxurydolo.vk.dto.PostVideoRequest;
 import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.photos.responses.GetWallUploadServerResponse;
-import com.vk.api.sdk.objects.photos.responses.PhotoUploadResponse;
-import com.vk.api.sdk.objects.photos.responses.SaveWallPhotoResponse;
+import com.vk.api.sdk.objects.video.responses.SaveResponse;
+import com.vk.api.sdk.objects.video.responses.UploadResponse;
 import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,55 +23,47 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkImageSenderTests {
+class VkVideoSenderTests {
 
     @Mock
-    private VkWallUploadServerRetriever vkWallUploadServerRetriever;
+    private VkVideoSaver vkVideoSaver;
 
     @Mock
-    private VkPhotoUploader vkPhotoUploader;
+    private VkVideoUploader vkVideoUploader;
 
     @Mock
-    private VkWallPhotoSaver vkWallPhotoSaver;
-
-    @Mock
-    private VkWallPoster vkWallPoster;
+    private VkVideoPoster vkVideoPoster;
 
     @Mock
     private FileUtils fileUtils;
 
     @Mock
-    private GetWallUploadServerResponse getWallUploadServerResponse;
+    private SaveResponse saveResponse;
 
     @Mock
     private File file;
 
     @Mock
-    private PhotoUploadResponse photoUploadResponse;
-
-    @Mock
-    private SaveWallPhotoResponse saveWallPhotoResponse;
+    private UploadResponse uploadResponse;
 
     @Mock
     private PostResponse postResponse;
 
     @InjectMocks
-    private VkImageSender vkImageSender;
+    private VkVideoSender vkVideoSender;
 
     @Test
     void testSend() {
-        when(vkWallUploadServerRetriever.retrieve(any(), any()))
-            .thenReturn(Mono.just(getWallUploadServerResponse));
+        when(vkVideoSaver.save(any()))
+            .thenReturn(Mono.just(saveResponse));
         when(fileUtils.createTempFile(anyString(), anyString(), any()))
             .thenReturn(Mono.just(file));
-        when(vkPhotoUploader.upload(any(), any()))
-            .thenReturn(Mono.just(photoUploadResponse));
-        when(vkWallPhotoSaver.save(any(), any(), any()))
-            .thenReturn(Mono.just(saveWallPhotoResponse));
-        when(vkWallPoster.post(any(), any(), any(), anyString()))
+        when(vkVideoUploader.upload(any(), any()))
+            .thenReturn(Mono.just(uploadResponse));
+        when(vkVideoPoster.post(any(), any(), any(), anyString()))
             .thenReturn(Mono.just(postResponse));
 
-        Mono<String> result = vkImageSender.send(postImageRequest());
+        Mono<String> result = vkVideoSender.send(postVideoRequest());
 
         create(result)
             .expectNext("caption")
@@ -81,24 +72,24 @@ class VkImageSenderTests {
 
     @Test
     void testSendWhenExceptionOccurred() {
-        when(vkWallUploadServerRetriever.retrieve(any(), any()))
-            .thenReturn(Mono.just(getWallUploadServerResponse));
+        when(vkVideoSaver.save(any()))
+            .thenReturn(Mono.just(saveResponse));
         when(fileUtils.createTempFile(anyString(), anyString(), any()))
             .thenReturn(Mono.just(file));
-        when(vkPhotoUploader.upload(any(), any()))
+        when(vkVideoUploader.upload(any(), any()))
             .thenReturn(Mono.error(new RuntimeException()));
 
-        Mono<String> result = vkImageSender.send(postImageRequest());
+        Mono<String> result = vkVideoSender.send(postVideoRequest());
 
         create(result)
             .expectError(RuntimeException.class)
             .verify();
     }
 
-    private static PostImageRequest postImageRequest() {
+    private static PostVideoRequest postVideoRequest() {
         byte[] bytes = {};
         UserActor userActor = mock(UserActor.class);
         GroupActor groupActor = mock(GroupActor.class);
-        return new PostImageRequest(bytes, "caption", userActor, groupActor);
+        return new PostVideoRequest(bytes, "caption", userActor, groupActor);
     }
 }
