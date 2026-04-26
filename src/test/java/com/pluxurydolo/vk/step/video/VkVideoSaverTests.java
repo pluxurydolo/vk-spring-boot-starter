@@ -17,11 +17,12 @@ import reactor.core.publisher.Mono;
 
 import static java.time.Duration.ZERO;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VideoSaverTests {
+class VkVideoSaverTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -42,7 +43,7 @@ class VideoSaverTests {
     private SaveResponse saveResponse;
 
     @InjectMocks
-    private VideoSaver videoSaver;
+    private VkVideoSaver vkVideoSaver;
 
     @Test
     void testSave() throws ClientException, ApiException {
@@ -55,10 +56,28 @@ class VideoSaverTests {
         when(videoSaveQuery.execute())
             .thenReturn(saveResponse);
 
-        Mono<SaveResponse> result = videoSaver.save(userActor);
+        Mono<SaveResponse> result = vkVideoSaver.save(userActor);
 
         create(result)
             .expectNext(saveResponse)
             .verifyComplete();
+    }
+
+    @Test
+    void testSaveWhenExceptionOccurred() throws ClientException, ApiException {
+        doThrow(RuntimeException.class)
+            .when(videoSaveQuery).execute();
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
+        when(vkApiClient.video())
+            .thenReturn(video);
+        when(video.save(any()))
+            .thenReturn(videoSaveQuery);
+
+        Mono<SaveResponse> result = vkVideoSaver.save(userActor);
+
+        create(result)
+            .expectError(RuntimeException.class)
+            .verify();
     }
 }

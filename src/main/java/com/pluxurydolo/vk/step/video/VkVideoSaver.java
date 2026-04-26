@@ -12,13 +12,13 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
-public class VideoSaver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VideoSaver.class);
+public class VkVideoSaver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkVideoSaver.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public VideoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkVideoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
