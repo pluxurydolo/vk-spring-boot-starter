@@ -1,7 +1,8 @@
 package com.pluxurydolo.vk.client;
 
 import com.pluxurydolo.vk.dto.PostImageRequest;
-import com.pluxurydolo.vk.step.image.VkImageSender;
+import com.pluxurydolo.vk.exception.image.VkImagePublishException;
+import com.pluxurydolo.vk.step.image.VkImagePublisher;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
 import org.junit.jupiter.api.Test;
@@ -20,14 +21,14 @@ import static reactor.test.StepVerifier.create;
 class VkImageClientTests {
 
     @Mock
-    private VkImageSender vkImageSender;
+    private VkImagePublisher vkImagePublisher;
 
     @InjectMocks
     private VkImageClient vkImageClient;
 
     @Test
     void testSendImageToGroup() {
-        when(vkImageSender.send(any()))
+        when(vkImagePublisher.publish(any()))
             .thenReturn(Mono.just(""));
 
         Mono<String> result = vkImageClient.sendImageToGroup(postImageRequest());
@@ -39,14 +40,13 @@ class VkImageClientTests {
 
     @Test
     void testSendImageToGroupWhenExceptionOccurred() {
-        when(vkImageSender.send(any()))
+        when(vkImagePublisher.publish(any()))
             .thenReturn(Mono.error(new RuntimeException()));
 
         Mono<String> result = vkImageClient.sendImageToGroup(postImageRequest());
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkImagePublishException.class));
     }
 
     private static PostImageRequest postImageRequest() {

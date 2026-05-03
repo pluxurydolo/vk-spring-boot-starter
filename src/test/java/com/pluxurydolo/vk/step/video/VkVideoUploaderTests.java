@@ -1,6 +1,8 @@
 package com.pluxurydolo.vk.step.video;
 
+import com.pluxurydolo.vk.exception.video.VkVideoUploadException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
+import com.pluxurydolo.vk.io.FileUtils;
 import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -35,6 +37,9 @@ class VkVideoUploaderTests {
     private VkApiProperties vkApiProperties;
 
     @Mock
+    private FileUtils fileUtils;
+
+    @Mock
     private SaveResponse saveResponse;
 
     @Mock
@@ -54,10 +59,14 @@ class VkVideoUploaderTests {
 
     @Test
     void testUpload() throws ClientException, ApiException {
-        when(vkApiProperties.delay())
-            .thenReturn(ZERO);
         when(saveResponse.getUploadUrl())
             .thenReturn(create("uri"));
+        when(fileUtils.createTempFile(anyString(), anyString(), any()))
+            .thenReturn(Mono.just(file));
+        when(fileUtils.deleteTempFile(any()))
+            .thenReturn(Mono.just(true));
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
         when(vkApiClient.upload())
             .thenReturn(upload);
         when(upload.video(anyString(), any(File.class)))
@@ -65,7 +74,7 @@ class VkVideoUploaderTests {
         when(uploadVideoQuery.execute())
             .thenReturn(uploadResponse);
 
-        Mono<UploadResponse> result = vkVideoUploader.upload(saveResponse, file);
+        Mono<UploadResponse> result = vkVideoUploader.upload(saveResponse, bytes());
 
         create(result)
             .expectNext(uploadResponse)
@@ -76,19 +85,24 @@ class VkVideoUploaderTests {
     void testUploadWhenExceptionOccurred() throws ClientException, ApiException {
         doThrow(RuntimeException.class)
             .when(uploadVideoQuery).execute();
-        when(vkApiProperties.delay())
-            .thenReturn(ZERO);
         when(saveResponse.getUploadUrl())
             .thenReturn(create("uri"));
+        when(fileUtils.createTempFile(anyString(), anyString(), any()))
+            .thenReturn(Mono.just(file));
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
         when(vkApiClient.upload())
             .thenReturn(upload);
         when(upload.video(anyString(), any(File.class)))
             .thenReturn(uploadVideoQuery);
 
-        Mono<UploadResponse> result = vkVideoUploader.upload(saveResponse, file);
+        Mono<UploadResponse> result = vkVideoUploader.upload(saveResponse, bytes());
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkVideoUploadException.class));
+    }
+
+    private static byte[] bytes() {
+        return new byte[]{};
     }
 }

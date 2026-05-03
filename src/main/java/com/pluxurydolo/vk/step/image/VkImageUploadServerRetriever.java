@@ -1,5 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
+import com.pluxurydolo.vk.exception.image.VkImageUploadServerException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -13,13 +14,13 @@ import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
-public class VkWallUploadServerRetriever {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VkWallUploadServerRetriever.class);
+public class VkImageUploadServerRetriever {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkImageUploadServerRetriever.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public VkWallUploadServerRetriever(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkImageUploadServerRetriever(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
@@ -35,6 +36,10 @@ public class VkWallUploadServerRetriever {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("lexf [vk-starter] Успешно получен сервер для загрузки картинки"));
+            .doOnSuccess(_ -> LOGGER.info("lexf [vk-starter] Успешно получен сервер для загрузки картинки"))
+            .onErrorResume(throwable -> {
+                LOGGER.error("oypd [vk-starter] Произошла ошибка при получении сервера для загрузки картинки");
+                return Mono.error(new VkImageUploadServerException(throwable));
+            });
     }
 }

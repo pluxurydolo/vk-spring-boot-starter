@@ -1,5 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
+import com.pluxurydolo.vk.exception.video.VkVideoSaveException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Video;
 import com.vk.api.sdk.client.VkApiClient;
@@ -77,7 +78,6 @@ class VkVideoSaverTests {
         Mono<SaveResponse> result = vkVideoSaver.save(userActor);
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkVideoSaveException.class));
     }
 }

@@ -1,12 +1,12 @@
 package com.pluxurydolo.vk.configuration;
 
 import com.pluxurydolo.vk.properties.VkApiProperties;
-import com.pluxurydolo.vk.step.image.VkImageSender;
-import com.pluxurydolo.vk.step.image.VkPhotoUploader;
-import com.pluxurydolo.vk.step.image.VkWallPhotoSaver;
-import com.pluxurydolo.vk.step.image.VkWallPoster;
-import com.pluxurydolo.vk.step.image.VkWallUploadServerRetriever;
-import com.pluxurydolo.vk.util.FileUtils;
+import com.pluxurydolo.vk.step.image.VkImagePublisher;
+import com.pluxurydolo.vk.step.image.VkImageUploadServerRetriever;
+import com.pluxurydolo.vk.step.image.VkImageUploader;
+import com.pluxurydolo.vk.step.image.VkImageWallPoster;
+import com.pluxurydolo.vk.step.image.VkImageWallSaver;
+import com.pluxurydolo.vk.io.FileUtils;
 import com.vk.api.sdk.client.VkApiClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -17,46 +17,39 @@ public class VkImageUploadStepConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public VkImageSender vkImageSender(
-        VkWallUploadServerRetriever vkWallUploadServerRetriever,
-        VkPhotoUploader vkPhotoUploader,
-        VkWallPhotoSaver vkWallPhotoSaver,
-        VkWallPoster vkWallPoster,
-        FileUtils fileUtils
+    public VkImagePublisher vkImagePublisher(
+        VkImageUploadServerRetriever vkImageUploadServerRetriever,
+        VkImageUploader vkImageUploader,
+        VkImageWallSaver vkImageWallSaver,
+        VkImageWallPoster vkImageWallPoster
     ) {
-        return new VkImageSender(
-            vkWallUploadServerRetriever,
-            vkPhotoUploader,
-            vkWallPhotoSaver,
-            vkWallPoster,
-            fileUtils
-        );
+        return new VkImagePublisher(vkImageUploadServerRetriever, vkImageUploader, vkImageWallSaver, vkImageWallPoster);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VkWallUploadServerRetriever vkWallUploadServerRetriever(
+    public VkImageUploadServerRetriever vkImageUploadServerRetriever(
         VkApiClient vkApiClient,
         VkApiProperties vkApiProperties
     ) {
-        return new VkWallUploadServerRetriever(vkApiClient, vkApiProperties);
+        return new VkImageUploadServerRetriever(vkApiClient, vkApiProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VkPhotoUploader vkPhotoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new VkPhotoUploader(vkApiClient, vkApiProperties);
+    public VkImageUploader vkImageUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties, FileUtils fileUtils) {
+        return new VkImageUploader(vkApiClient, vkApiProperties, fileUtils);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VkWallPhotoSaver vkWallPhotoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new VkWallPhotoSaver(vkApiClient, vkApiProperties);
+    public VkImageWallSaver vkImageWallSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkImageWallSaver(vkApiClient, vkApiProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VkWallPoster vkWallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new VkWallPoster(vkApiClient, vkApiProperties);
+    public VkImageWallPoster vkImageWallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkImageWallPoster(vkApiClient, vkApiProperties);
     }
 }

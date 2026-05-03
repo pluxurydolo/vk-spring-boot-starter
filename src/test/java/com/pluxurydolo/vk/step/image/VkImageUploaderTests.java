@@ -1,6 +1,8 @@
 package com.pluxurydolo.vk.step.image;
 
+import com.pluxurydolo.vk.exception.image.VkImageUploadException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
+import com.pluxurydolo.vk.io.FileUtils;
 import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -26,13 +28,16 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkPhotoUploaderTests {
+class VkImageUploaderTests {
 
     @Mock
     private VkApiClient vkApiClient;
 
     @Mock
     private VkApiProperties vkApiProperties;
+
+    @Mock
+    private FileUtils fileUtils;
 
     @Mock
     private GetWallUploadServerResponse getWallUploadServerResponse;
@@ -50,14 +55,18 @@ class VkPhotoUploaderTests {
     private PhotoUploadResponse photoUploadResponse;
 
     @InjectMocks
-    private VkPhotoUploader vkPhotoUploader;
+    private VkImageUploader vkImageUploader;
 
     @Test
     void testUpload() throws ClientException, ApiException {
-        when(vkApiProperties.delay())
-            .thenReturn(ZERO);
         when(getWallUploadServerResponse.getUploadUrl())
             .thenReturn(create("uri"));
+        when(fileUtils.createTempFile(anyString(), anyString(), any()))
+            .thenReturn(Mono.just(file));
+        when(fileUtils.deleteTempFile(any()))
+            .thenReturn(Mono.just(true));
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
         when(vkApiClient.upload())
             .thenReturn(upload);
         when(upload.photo(anyString(), any(File.class)))
@@ -65,7 +74,7 @@ class VkPhotoUploaderTests {
         when(uploadPhotoQuery.execute())
             .thenReturn(photoUploadResponse);
 
-        Mono<PhotoUploadResponse> result = vkPhotoUploader.upload(getWallUploadServerResponse, file);
+        Mono<PhotoUploadResponse> result = vkImageUploader.upload(getWallUploadServerResponse, bytes());
 
         create(result)
             .expectNext(photoUploadResponse)
@@ -76,19 +85,24 @@ class VkPhotoUploaderTests {
     void testUploadWhenExceptionOccurred() throws ClientException, ApiException {
         doThrow(RuntimeException.class)
             .when(uploadPhotoQuery).execute();
-        when(vkApiProperties.delay())
-            .thenReturn(ZERO);
         when(getWallUploadServerResponse.getUploadUrl())
             .thenReturn(create("uri"));
+        when(fileUtils.createTempFile(anyString(), anyString(), any()))
+            .thenReturn(Mono.just(file));
+        when(vkApiProperties.delay())
+            .thenReturn(ZERO);
         when(vkApiClient.upload())
             .thenReturn(upload);
         when(upload.photo(anyString(), any(File.class)))
             .thenReturn(uploadPhotoQuery);
 
-        Mono<PhotoUploadResponse> result = vkPhotoUploader.upload(getWallUploadServerResponse, file);
+        Mono<PhotoUploadResponse> result = vkImageUploader.upload(getWallUploadServerResponse, bytes());
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkImageUploadException.class));
+    }
+
+    private static byte[] bytes() {
+        return new byte[]{};
     }
 }

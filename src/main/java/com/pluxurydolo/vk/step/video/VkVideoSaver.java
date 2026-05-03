@@ -1,5 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
+import com.pluxurydolo.vk.exception.video.VkVideoSaveException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -31,6 +32,10 @@ public class VkVideoSaver {
 
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
-            .doOnSuccess(_ -> LOGGER.info("sfli [vk-starter] Ссылка для сохранения видео успешно получена"));
+            .doOnSuccess(_ -> LOGGER.info("sfli [vk-starter] Ссылка для сохранения видео успешно получена"))
+            .onErrorResume(throwable -> {
+                LOGGER.error("nzev [vk-starter] Произошла ошибка при получении ссылки для сохранения видео");
+                return Mono.error(new VkVideoSaveException(throwable));
+            });
     }
 }

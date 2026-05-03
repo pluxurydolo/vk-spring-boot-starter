@@ -1,5 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
+import com.pluxurydolo.vk.exception.image.VkImageWallSaveException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -15,27 +16,23 @@ import reactor.core.scheduler.Schedulers;
 import java.time.Duration;
 import java.util.List;
 
-public class VkWallPhotoSaver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(VkWallPhotoSaver.class);
+public class VkImageWallSaver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VkImageWallSaver.class);
 
     private final VkApiClient vkApiClient;
     private final VkApiProperties vkApiProperties;
 
-    public VkWallPhotoSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+    public VkImageWallSaver(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
         this.vkApiClient = vkApiClient;
         this.vkApiProperties = vkApiProperties;
     }
 
-    public Mono<SaveWallPhotoResponse> save(
-        PhotoUploadResponse photoUploadResponse,
-        UserActor userActor,
-        GroupActor groupActor
-    ) {
+    public Mono<SaveWallPhotoResponse> save(PhotoUploadResponse response, UserActor userActor, GroupActor groupActor) {
         Duration delay = vkApiProperties.delay();
 
-        Integer server = photoUploadResponse.getServer();
-        String hash = photoUploadResponse.getHash();
-        String photo = photoUploadResponse.getPhoto();
+        Integer server = response.getServer();
+        String hash = response.getHash();
+        String photo = response.getPhoto();
         long groupId = -groupActor.getGroupId();
 
         PhotosSaveWallPhotoQuery query = vkApiClient.photos()
@@ -48,6 +45,10 @@ public class VkWallPhotoSaver {
         return Mono.fromCallable(query::execute)
             .delayElement(delay, Schedulers.boundedElastic())
             .map(List::getFirst)
-            .doOnSuccess(_ -> LOGGER.info("nfcv [vk-starter] Картинка успешно сохранена в альбом wall группы {}", groupId));
+            .doOnSuccess(_ -> LOGGER.info("nfcv [vk-starter] Картинка успешно сохранена в альбом wall группы {}", groupId))
+            .onErrorResume(throwable -> {
+                LOGGER.error("ijgb [vk-starter] Произошла ошибка при сохранении картинки в альбом wall группы {}", groupId);
+                return Mono.error(new VkImageWallSaveException(throwable));
+            });
     }
 }

@@ -1,5 +1,7 @@
-package com.pluxurydolo.vk.util;
+package com.pluxurydolo.vk.io;
 
+import com.pluxurydolo.vk.exception.io.VkCreateTempFileException;
+import com.pluxurydolo.vk.exception.io.VkDeleteTempFileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -21,7 +23,20 @@ public class FileUtils {
             .flatMap(file -> addBytes(file, bytes))
             .subscribeOn(Schedulers.boundedElastic())
             .doOnSuccess(_ -> LOGGER.info("rgva [vk-starter] Успешно создан временный файл {}{}", fileName, fileExtension))
-            .doOnError(throwable -> LOGGER.error("egbz [vk-starter] Произошла ошибка при создании временного файла", throwable));
+            .onErrorResume(throwable -> {
+                LOGGER.error("egbz [vk-starter] Произошла ошибка при создании временного файла", throwable);
+                return Mono.error(new VkCreateTempFileException(throwable));
+            });
+    }
+
+    public Mono<Boolean> deleteTempFile(File file) {
+        return Mono.fromCallable(() -> Files.deleteIfExists(file.toPath()))
+            .subscribeOn(Schedulers.boundedElastic())
+            .doOnSuccess(_ -> LOGGER.info("njkj [vk-starter] Успешно удален временный файл {}", file.getAbsolutePath()))
+            .onErrorResume(throwable -> {
+                LOGGER.error("yftl [vk-starter] Произошла ошибка при удалении временного файла", throwable);
+                return Mono.error(new VkDeleteTempFileException(throwable));
+            });
     }
 
     private static Mono<File> addBytes(File file, byte[] bytes) {
@@ -31,7 +46,6 @@ public class FileUtils {
             return Mono.error(exception);
         }
 
-        file.deleteOnExit();
         return Mono.just(file);
     }
 }

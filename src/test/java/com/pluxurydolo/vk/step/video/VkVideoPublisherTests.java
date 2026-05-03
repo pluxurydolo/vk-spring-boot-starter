@@ -1,7 +1,6 @@
 package com.pluxurydolo.vk.step.video;
 
 import com.pluxurydolo.vk.dto.PostVideoRequest;
-import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.video.responses.SaveResponse;
@@ -14,8 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -23,7 +20,7 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkVideoSenderTests {
+class VkVideoPublisherTests {
 
     @Mock
     private VkVideoSaver vkVideoSaver;
@@ -32,16 +29,10 @@ class VkVideoSenderTests {
     private VkVideoUploader vkVideoUploader;
 
     @Mock
-    private VkVideoPoster vkVideoPoster;
-
-    @Mock
-    private FileUtils fileUtils;
+    private VkVideoWallPoster vkVideoWallPoster;
 
     @Mock
     private SaveResponse saveResponse;
-
-    @Mock
-    private File file;
 
     @Mock
     private UploadResponse uploadResponse;
@@ -50,20 +41,18 @@ class VkVideoSenderTests {
     private PostResponse postResponse;
 
     @InjectMocks
-    private VkVideoSender vkVideoSender;
+    private VkVideoPublisher vkVideoPublisher;
 
     @Test
     void testSend() {
         when(vkVideoSaver.save(any()))
             .thenReturn(Mono.just(saveResponse));
-        when(fileUtils.createTempFile(anyString(), anyString(), any()))
-            .thenReturn(Mono.just(file));
         when(vkVideoUploader.upload(any(), any()))
             .thenReturn(Mono.just(uploadResponse));
-        when(vkVideoPoster.post(any(), any(), any(), anyString()))
+        when(vkVideoWallPoster.post(any(), any(), any(), anyString()))
             .thenReturn(Mono.just(postResponse));
 
-        Mono<String> result = vkVideoSender.send(postVideoRequest());
+        Mono<String> result = vkVideoPublisher.send(postVideoRequest());
 
         create(result)
             .expectNext("caption")
@@ -74,16 +63,13 @@ class VkVideoSenderTests {
     void testSendWhenExceptionOccurred() {
         when(vkVideoSaver.save(any()))
             .thenReturn(Mono.just(saveResponse));
-        when(fileUtils.createTempFile(anyString(), anyString(), any()))
-            .thenReturn(Mono.just(file));
         when(vkVideoUploader.upload(any(), any()))
             .thenReturn(Mono.error(new RuntimeException()));
 
-        Mono<String> result = vkVideoSender.send(postVideoRequest());
+        Mono<String> result = vkVideoPublisher.send(postVideoRequest());
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(RuntimeException.class));
     }
 
     private static PostVideoRequest postVideoRequest() {

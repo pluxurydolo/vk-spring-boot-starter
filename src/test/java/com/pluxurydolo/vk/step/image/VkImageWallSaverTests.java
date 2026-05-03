@@ -1,5 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
+import com.pluxurydolo.vk.exception.image.VkImageWallSaveException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Photos;
 import com.vk.api.sdk.client.VkApiClient;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkWallPhotoSaverTests {
+class VkImageWallSaverTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -56,7 +57,7 @@ class VkWallPhotoSaverTests {
     private SaveWallPhotoResponse saveWallPhotoResponse;
 
     @InjectMocks
-    private VkWallPhotoSaver vkWallPhotoSaver;
+    private VkImageWallSaver vkImageWallSaver;
 
     @Test
     void testSave() throws ClientException, ApiException {
@@ -85,7 +86,7 @@ class VkWallPhotoSaverTests {
         when(photosSaveWallPhotoQuery.execute())
             .thenReturn(List.of(saveWallPhotoResponse));
 
-        Mono<SaveWallPhotoResponse> result = vkWallPhotoSaver.save(photoUploadResponse, userActor, groupActor);
+        Mono<SaveWallPhotoResponse> result = vkImageWallSaver.save(photoUploadResponse, userActor, groupActor);
 
         create(result)
             .expectNext(saveWallPhotoResponse)
@@ -119,10 +120,9 @@ class VkWallPhotoSaverTests {
         when(photosSaveWallPhotoQuery.groupId(anyLong()))
             .thenReturn(photosSaveWallPhotoQuery);
 
-        Mono<SaveWallPhotoResponse> result = vkWallPhotoSaver.save(photoUploadResponse, userActor, groupActor);
+        Mono<SaveWallPhotoResponse> result = vkImageWallSaver.save(photoUploadResponse, userActor, groupActor);
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkImageWallSaveException.class));
     }
 }

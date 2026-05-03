@@ -1,5 +1,6 @@
-package com.pluxurydolo.vk.step.image;
+package com.pluxurydolo.vk.step.video;
 
+import com.pluxurydolo.vk.exception.video.VkVideoPostException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Wall;
 import com.vk.api.sdk.client.VkApiClient;
@@ -7,7 +8,7 @@ import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.objects.photos.responses.SaveWallPhotoResponse;
+import com.vk.api.sdk.objects.video.responses.UploadResponse;
 import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import com.vk.api.sdk.queries.wall.WallPostQuery;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkWallPosterTests {
+class VkVideoWallPosterTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -36,7 +37,7 @@ class VkWallPosterTests {
     private VkApiProperties vkApiProperties;
 
     @Mock
-    private SaveWallPhotoResponse saveWallPhotoResponse;
+    private UploadResponse uploadResponse;
 
     @Mock
     private UserActor userActor;
@@ -54,16 +55,16 @@ class VkWallPosterTests {
     private PostResponse postResponse;
 
     @InjectMocks
-    private VkWallPoster vkWallPoster;
+    private VkVideoWallPoster vkVideoWallPoster;
 
     @Test
     void testPost() throws ClientException, ApiException {
         when(vkApiProperties.delay())
             .thenReturn(ZERO);
-        when(saveWallPhotoResponse.getOwnerId())
-            .thenReturn(1L);
-        when(saveWallPhotoResponse.getId())
+        when(uploadResponse.getVideoId())
             .thenReturn(1);
+        when(userActor.getId())
+            .thenReturn(1L);
         when(groupActor.getGroupId())
             .thenReturn(1L);
         when(vkApiClient.wall())
@@ -81,7 +82,7 @@ class VkWallPosterTests {
         when(wallPostQuery.execute())
             .thenReturn(postResponse);
 
-        Mono<PostResponse> result = vkWallPoster.post(saveWallPhotoResponse, userActor, groupActor, "text");
+        Mono<PostResponse> result = vkVideoWallPoster.post(uploadResponse, userActor, groupActor, "text");
 
         create(result)
             .expectNext(postResponse)
@@ -94,10 +95,10 @@ class VkWallPosterTests {
             .when(wallPostQuery).execute();
         when(vkApiProperties.delay())
             .thenReturn(ZERO);
-        when(saveWallPhotoResponse.getOwnerId())
-            .thenReturn(1L);
-        when(saveWallPhotoResponse.getId())
+        when(uploadResponse.getVideoId())
             .thenReturn(1);
+        when(userActor.getId())
+            .thenReturn(1L);
         when(groupActor.getGroupId())
             .thenReturn(1L);
         when(vkApiClient.wall())
@@ -113,10 +114,9 @@ class VkWallPosterTests {
         when(wallPostQuery.fromGroup(anyBoolean()))
             .thenReturn(wallPostQuery);
 
-        Mono<PostResponse> result = vkWallPoster.post(saveWallPhotoResponse, userActor, groupActor, "text");
+        Mono<PostResponse> result = vkVideoWallPoster.post(uploadResponse, userActor, groupActor, "text");
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkVideoPostException.class));
     }
 }

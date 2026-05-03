@@ -1,4 +1,4 @@
-package com.pluxurydolo.vk.util;
+package com.pluxurydolo.vk.io;
 
 import com.pluxurydolo.vk.base.AbstractIntegrationTests;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,26 @@ class FileUtilsTests extends AbstractIntegrationTests {
                     .exists();
                 assertThat(fileLength)
                     .isEqualTo(3L);
+
+                return true;
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    void testDeleteTempFile() {
+        File file = fileUtils.createTempFile("blah", ".txt", new byte[]{1, 2, 3})
+            .block();
+
+        Mono<Boolean> result = fileUtils.deleteTempFile(file);
+
+        create(result)
+            .expectNextMatches(deleted -> {
+                assertThat(deleted)
+                    .isTrue();
+
+                assertThat(file)
+                    .doesNotExist();
 
                 return true;
             })

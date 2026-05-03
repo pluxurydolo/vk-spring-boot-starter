@@ -1,7 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
 import com.pluxurydolo.vk.dto.PostImageRequest;
-import com.pluxurydolo.vk.util.FileUtils;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.photos.responses.GetWallUploadServerResponse;
@@ -15,8 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -24,28 +21,22 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkImageSenderTests {
+class VkImagePublisherTests {
 
     @Mock
-    private VkWallUploadServerRetriever vkWallUploadServerRetriever;
+    private VkImageUploadServerRetriever vkImageUploadServerRetriever;
 
     @Mock
-    private VkPhotoUploader vkPhotoUploader;
+    private VkImageUploader vkImageUploader;
 
     @Mock
-    private VkWallPhotoSaver vkWallPhotoSaver;
+    private VkImageWallSaver vkImageWallSaver;
 
     @Mock
-    private VkWallPoster vkWallPoster;
-
-    @Mock
-    private FileUtils fileUtils;
+    private VkImageWallPoster vkImageWallPoster;
 
     @Mock
     private GetWallUploadServerResponse getWallUploadServerResponse;
-
-    @Mock
-    private File file;
 
     @Mock
     private PhotoUploadResponse photoUploadResponse;
@@ -57,22 +48,20 @@ class VkImageSenderTests {
     private PostResponse postResponse;
 
     @InjectMocks
-    private VkImageSender vkImageSender;
+    private VkImagePublisher vkImagePublisher;
 
     @Test
-    void testSend() {
-        when(vkWallUploadServerRetriever.retrieve(any(), any()))
+    void testPublish() {
+        when(vkImageUploadServerRetriever.retrieve(any(), any()))
             .thenReturn(Mono.just(getWallUploadServerResponse));
-        when(fileUtils.createTempFile(anyString(), anyString(), any()))
-            .thenReturn(Mono.just(file));
-        when(vkPhotoUploader.upload(any(), any()))
+        when(vkImageUploader.upload(any(), any()))
             .thenReturn(Mono.just(photoUploadResponse));
-        when(vkWallPhotoSaver.save(any(), any(), any()))
+        when(vkImageWallSaver.save(any(), any(), any()))
             .thenReturn(Mono.just(saveWallPhotoResponse));
-        when(vkWallPoster.post(any(), any(), any(), anyString()))
+        when(vkImageWallPoster.post(any(), any(), any(), anyString()))
             .thenReturn(Mono.just(postResponse));
 
-        Mono<String> result = vkImageSender.send(postImageRequest());
+        Mono<String> result = vkImagePublisher.publish(postImageRequest());
 
         create(result)
             .expectNext("caption")
@@ -80,19 +69,16 @@ class VkImageSenderTests {
     }
 
     @Test
-    void testSendWhenExceptionOccurred() {
-        when(vkWallUploadServerRetriever.retrieve(any(), any()))
+    void testPublishWhenExceptionOccurred() {
+        when(vkImageUploadServerRetriever.retrieve(any(), any()))
             .thenReturn(Mono.just(getWallUploadServerResponse));
-        when(fileUtils.createTempFile(anyString(), anyString(), any()))
-            .thenReturn(Mono.just(file));
-        when(vkPhotoUploader.upload(any(), any()))
+        when(vkImageUploader.upload(any(), any()))
             .thenReturn(Mono.error(new RuntimeException()));
 
-        Mono<String> result = vkImageSender.send(postImageRequest());
+        Mono<String> result = vkImagePublisher.publish(postImageRequest());
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(RuntimeException.class));
     }
 
     private static PostImageRequest postImageRequest() {

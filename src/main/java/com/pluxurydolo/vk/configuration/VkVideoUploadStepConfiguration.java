@@ -1,11 +1,11 @@
 package com.pluxurydolo.vk.configuration;
 
 import com.pluxurydolo.vk.properties.VkApiProperties;
-import com.pluxurydolo.vk.step.video.VkVideoPoster;
+import com.pluxurydolo.vk.step.video.VkVideoPublisher;
 import com.pluxurydolo.vk.step.video.VkVideoSaver;
-import com.pluxurydolo.vk.step.video.VkVideoSender;
 import com.pluxurydolo.vk.step.video.VkVideoUploader;
-import com.pluxurydolo.vk.util.FileUtils;
+import com.pluxurydolo.vk.step.video.VkVideoWallPoster;
+import com.pluxurydolo.vk.io.FileUtils;
 import com.vk.api.sdk.client.VkApiClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -16,19 +16,18 @@ public class VkVideoUploadStepConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public VkVideoSender vkVideoSender(
+    public VkVideoPublisher vkVideoPublisher(
         VkVideoSaver vkVideoSaver,
         VkVideoUploader vkVideoUploader,
-        VkVideoPoster vkVideoPoster,
-        FileUtils fileUtils
+        VkVideoWallPoster vkVideoWallPoster
     ) {
-        return new VkVideoSender(vkVideoSaver, vkVideoUploader, vkVideoPoster, fileUtils);
+        return new VkVideoPublisher(vkVideoSaver, vkVideoUploader, vkVideoWallPoster);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public VkVideoUploader vkVideoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new VkVideoUploader(vkApiClient, vkApiProperties);
+    public VkVideoUploader vkVideoUploader(VkApiClient vkApiClient, VkApiProperties vkApiProperties, FileUtils fileUtils) {
+        return new VkVideoUploader(vkApiClient, vkApiProperties, fileUtils);
     }
 
     @Bean
@@ -39,7 +38,7 @@ public class VkVideoUploadStepConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public VkVideoPoster vkVideoPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
-        return new VkVideoPoster(vkApiClient, vkApiProperties);
+    public VkVideoWallPoster vkVideoWallPoster(VkApiClient vkApiClient, VkApiProperties vkApiProperties) {
+        return new VkVideoWallPoster(vkApiClient, vkApiProperties);
     }
 }

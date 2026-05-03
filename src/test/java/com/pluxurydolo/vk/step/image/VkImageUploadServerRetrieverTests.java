@@ -1,5 +1,6 @@
 package com.pluxurydolo.vk.step.image;
 
+import com.pluxurydolo.vk.exception.image.VkImageUploadServerException;
 import com.pluxurydolo.vk.properties.VkApiProperties;
 import com.vk.api.sdk.actions.Photos;
 import com.vk.api.sdk.client.VkApiClient;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static reactor.test.StepVerifier.create;
 
 @ExtendWith(MockitoExtension.class)
-class VkWallUploadServerRetrieverTests {
+class VkImageUploadServerRetrieverTests {
 
     @Mock
     private VkApiClient vkApiClient;
@@ -48,7 +49,7 @@ class VkWallUploadServerRetrieverTests {
     private GetWallUploadServerResponse getWallUploadServerResponse;
 
     @InjectMocks
-    private VkWallUploadServerRetriever vkWallUploadServerRetriever;
+    private VkImageUploadServerRetriever vkImageUploadServerRetriever;
 
     @Test
     void testRetrieve() throws ClientException, ApiException {
@@ -65,7 +66,7 @@ class VkWallUploadServerRetrieverTests {
         when(photosGetWallUploadServerQuery.execute())
             .thenReturn(getWallUploadServerResponse);
 
-        Mono<GetWallUploadServerResponse> result = vkWallUploadServerRetriever.retrieve(userActor, groupActor);
+        Mono<GetWallUploadServerResponse> result = vkImageUploadServerRetriever.retrieve(userActor, groupActor);
 
         create(result)
             .expectNext(getWallUploadServerResponse)
@@ -87,10 +88,9 @@ class VkWallUploadServerRetrieverTests {
         when(photosGetWallUploadServerQuery.groupId(anyLong()))
             .thenReturn(photosGetWallUploadServerQuery);
 
-        Mono<GetWallUploadServerResponse> result = vkWallUploadServerRetriever.retrieve(userActor, groupActor);
+        Mono<GetWallUploadServerResponse> result = vkImageUploadServerRetriever.retrieve(userActor, groupActor);
 
         create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+            .verifyErrorMatches(throwable -> throwable.getClass().equals(VkImageUploadServerException.class));
     }
 }
