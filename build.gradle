@@ -10,7 +10,7 @@ plugins {
     id 'io.github.pluxurydolo.test-plugin' version "$testPluginVersion"
     id 'io.github.pluxurydolo.logs-validation-plugin' version "$logsValidationPluginVersion"
     id 'io.github.pluxurydolo.checkstyle-plugin' version "$checkstylePluginVersion"
-    id 'io.github.pluxurydolo.version-plugin' version "$versionPluginVersion"
+    id 'io.github.pluxurydolo.infrastructure-plugin' version "$infrastructurePluginVersion"
 
     id 'org.jreleaser' version "$jreleaserVersion"
 }
