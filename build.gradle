@@ -7,10 +7,10 @@ plugins {
     id 'org.springframework.boot' version "$springBootVersion"
     id 'io.spring.dependency-management' version "$dependencyManagementVersion"
 
-    id 'io.github.pluxurydolo.test-plugin' version "$testPluginVersion"
-    id 'io.github.pluxurydolo.logs-validation-plugin' version "$logsValidationPluginVersion"
     id 'io.github.pluxurydolo.checkstyle-plugin' version "$checkstylePluginVersion"
     id 'io.github.pluxurydolo.infrastructure-plugin' version "$infrastructurePluginVersion"
+    id 'io.github.pluxurydolo.logs-validation-plugin' version "$logsValidationPluginVersion"
+    id 'io.github.pluxurydolo.test-plugin' version "$testPluginVersion"
 
     id 'org.jreleaser' version "$jreleaserVersion"
 }
